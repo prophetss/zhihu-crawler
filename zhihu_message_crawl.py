@@ -34,6 +34,3 @@ def crawl_message():
             except Exception as e:
                 common.error_print(e)
     print('Running zhihu_message_crawl time: %.2f Seconds\n' % (time.clock() - start))
-
-
-print(common.r.hlen('zhTopicQuestions'))
