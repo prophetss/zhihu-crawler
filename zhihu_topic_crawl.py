@@ -67,7 +67,9 @@ def expand_topics():
                     parent_topic_id = int(p['id'])
                     ids = common.r.hget('zhTopicDAG', parent_topic_id)
                     if ids:
-                        eval(ids).add(child_topic_id)
+						newset = eval(ids)
+                        newset.add(child_topic_id)
+						common.r.hset('zhTopicDAG', parent_topic_id, newset)
                     else:
                         parent_topic_ids.put(parent_topic_id)
                         common.r.hset('zhTopicDAG', parent_topic_id, {tid})
