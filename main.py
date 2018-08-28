@@ -1,6 +1,4 @@
-import keywords_generator
-import zhihu_message_crawl
-import zhihu_topic_crawl
+from zh_crawl import keywords_generator, zhihu_message_crawl, zhihu_topic_crawl
 import time
 
 if __name__ == '__main__':
