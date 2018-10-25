@@ -9,3 +9,6 @@
 3.zhTopicDAG内key-父话题id，value-子话题id队列  
 
 output.py是一个单独运行的文件，是将存储的话题结构合内容按目录输出并生成对应文件保存相关内容
+
+
+所需库：redis、BeautifulSoup、requests、networkx（输出专用）
