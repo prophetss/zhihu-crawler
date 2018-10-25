@@ -2,7 +2,7 @@
 
 代理ip获取：https://github.com/jhao104/proxy_pool
 
-非登录模式下通过抓取百度知道关键词来在知乎上搜索相似话题，而后进一步扩展此话题。目前实测一小时抓取3000个左右包括话题相关内容和精华问题等 
+非登录模式下抓取知乎话题，多进程，通过抓取百度知道关键词来在知乎上搜索相似话题，而后进一步扩展此话题。
 存储数据库为redis，最终产生3个hash表来存放结果   
 1.zhTopicMessage哈希表内key-话题id，value-字典{'name':名称, 'questions':问题数, 'followers',关注人数}  
 2.zhTopicQuestions哈希表key-话题id，value-字典{'question':问题, 'anthor':作者, 'contents':'评论数':likes':点赞数，‘href':链接}  
