@@ -13,6 +13,18 @@ class Config(object):
         self.cfg.read(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Config.ini'), encoding='utf-8')
 
     @LazyProperty
+    def option(self):
+        return int(self.cfg.get('MAIN', 'option'))
+
+    @LazyProperty
+    def essence_nums(self):
+        return int(self.cfg.get('MAIN', 'essence'))
+
+    @LazyProperty
+    def top_activity_nums(self):
+        return int(self.cfg.get('MAIN', 'top_activity'))
+
+    @LazyProperty
     def db_redis_host(self):
         return self.cfg.get('DB_REDIS', 'host')
 
@@ -25,16 +37,20 @@ class Config(object):
         return self.cfg.get('DB_REDIS', 'name')
 
     @LazyProperty
+    def proxy_getter_functions(self):
+        return self.cfg.options('ProxyGetter')
+
+    @LazyProperty
     def temp_kw_max(self):
         return self.cfg.get('COMMON', 'temp_kw_max')
 
     @LazyProperty
-    def except_log_name(self):
-        return self.cfg.get('COMMON', 'except_log_name')
+    def stream_log_level(self):
+        return int(self.cfg.get('RUN_LOG', 'stream_log_level'))
 
     @LazyProperty
-    def run_log_name(self):
-        return self.cfg.get('COMMON', 'run_log_name')
+    def file_log_level(self):
+        return int(self.cfg.get('RUN_LOG', 'file_log_level'))
 
 
 conf = Config()
