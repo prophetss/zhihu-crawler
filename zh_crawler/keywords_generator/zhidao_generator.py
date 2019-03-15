@@ -52,8 +52,8 @@ class ZhiDaoGenerator:
                     self.logger.info(str(qt))
                     redis_cli.save_keyword(qt)
                 # 问题内容包含关键词提取
-                qms = self.__zd_question_keywords(qs.a.get('href'))
-                for qm in qms:
+                for qm in self.__zd_question_keywords(qs.a.get('href')):
+                    self.logger.info(str(qm))
                     redis_cli.save_keyword(str(qm))
         except RequestException as re:
             self.logger.warn(re)

@@ -7,6 +7,7 @@ from util.loghandler import LogHandler
 from urllib3.util.retry import Retry
 from util.decorator import timethis
 from util.config import conf
+import logging
 import requests
 import random
 import queue
@@ -40,6 +41,7 @@ class ZhihuTopicGenerator:
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
         self.logger = LogHandler('topics_generator')
+        logging.getLogger("urllib3").setLevel(logging.ERROR)
 
     def __get_topic_message(self, tid):
         """
@@ -49,7 +51,7 @@ class ZhihuTopicGenerator:
         """
         try:
             j_rst = self.session.get(url=ZhihuTopicGenerator.topic_message_url % tid, headers=headers,
-                                     proxies=random.choice(self.proxies_list), timeout=3).json()
+                                     proxies=random.choice(self.proxies_list), timeout=0.1).json()
             if redis_cli.hset('zhTopicMessage', tid,
                               str({"name": j_rst.get("name"), 'introduction': j_rst.get("introduction"),
                                    "questions_count": j_rst.get("questions_count"),

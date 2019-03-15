@@ -38,3 +38,7 @@ class KeywordsController:
 
 def run():
     KeywordsController().kw_run()
+
+
+if __name__ == '__main__':
+    run()

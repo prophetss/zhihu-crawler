@@ -1,5 +1,3 @@
-from requests.exceptions import RequestException
-from urllib3.exceptions import RequestError
 from db.redis_client import redis_cli
 from util.common import headers
 from util.common import addtwodimdict
@@ -90,14 +88,14 @@ class QuestionsGenerator:
             try:
                 ques = session.get(url=url, headers=headers,
                                    proxies=random.choice(self.proxies_list),
-                                   timeout=3)
-            except RequestException as re:
-                self.logger.warn(re, url)
+                                   timeout=0.1)
+            except Exception as re:
+                self.logger.warn((re, url))
                 continue
             try:
                 q_json = ques.json() if ques else {}
             except JSONDecodeError as je:
-                self.logger.error(je, url, ques)
+                self.logger.error((je, url, ques))
                 continue
             for q in q_json.get('data', []):
                 target = q.get('target', {})
