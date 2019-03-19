@@ -88,7 +88,7 @@ class QuestionsGenerator:
             try:
                 ques = session.get(url=url, headers=headers,
                                    proxies=random.choice(self.proxies_list),
-                                   timeout=0.1)
+                                   timeout=3)
             except Exception as re:
                 self.logger.warn((re, url))
                 continue

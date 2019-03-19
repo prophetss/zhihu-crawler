@@ -53,7 +53,7 @@ class ProxyManager(object):
                     else:
                         self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
             except Exception as e:
-                self.log.error("{func}: fetch proxy fail\n".format(func=proxyGetter))
+                self.log.error("{func}: fetch proxy fail".format(func=proxyGetter))
                 continue
 
     def get(self):

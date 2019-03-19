@@ -74,8 +74,9 @@ class ZhihuTopicGenerator:
         for offset in range(0, 1000, 10):
             try:
                 url = ZhihuTopicGenerator.zh_search_url % (tw, offset)
-                topics = self.session.get(url=url, headers=headers,
-                                          proxies=random.choice(self.proxies_list), timeout=3).json().get('data')
+                j_topics = self.session.get(url=url, headers=headers,
+                                            proxies=random.choice(self.proxies_list), timeout=3).json()
+                topics = j_topics.get('data', None) if j_topics else None
                 if not topics:  # 已到最后
                     return
                 # 每一页获取话题相关详细信息
@@ -89,11 +90,11 @@ class ZhihuTopicGenerator:
                     else:
                         break
             except RequestException as re:
-                self.logger.warn(re, url)
+                self.logger.warn((re, url))
             except ReadTimeout as rte:
-                self.logger.warn(rte, url)
+                self.logger.warn((rte, url))
             except KeyError as ke:
-                self.logger.warn(ke, url)
+                self.logger.warn((ke, url))
             except Exception as e:
                 raise e
 
@@ -141,8 +142,6 @@ class ZhihuTopicGenerator:
 
 def speed_state(threshold):
     return redis_cli.scard('zhNewTopicID') < threshold
-
-
 
 
 def run():

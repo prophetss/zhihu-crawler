@@ -65,7 +65,7 @@ class ProxyRefreshSchedule(ProxyManager):
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy_item = self.db.pop()
             remaining_proxies = self.getAll()
-        # self.log.info('ProxyRefreshSchedule: %s validProxy complete' % time.ctime())
+        self.log.info('ProxyRefreshSchedule: %s validProxy complete' % time.ctime())
 
 
 def refreshPool():
@@ -97,8 +97,8 @@ def fetchAll():
 def run():
     scheduler = BackgroundScheduler()
     # 不用太快, 网站更新速度比较慢, 太快会加大验证压力, 导致raw_proxy积压
-    scheduler.add_job(fetchAll, 'interval', minutes=10, max_instances=10, id="fetch_proxy")
-    scheduler.add_job(batchRefresh, "interval", minutes=1, max_instances=10)  # 每分钟检查一次
+    scheduler.add_job(fetchAll,  'interval', minutes=10, id="fetch_proxy")
+    scheduler.add_job(batchRefresh, "interval", minutes=1)  # 每分钟检查一次
     scheduler.start()
 
     fetchAll()

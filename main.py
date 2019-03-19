@@ -28,10 +28,10 @@ def process_monitored(p_list):
 def wait_proxy():
     """ 等待获取足够的代理ip """
     for i in range(300):
-        ip_nums = redis_cli.hlen('useful_proxy')
-        if ip_nums > 10:
+        proxyies = redis_cli.hlen('useful_proxy')
+        if proxyies > 5:
             return True
-        print('\rwait for enough proxy ip...', end='')
+        print('\rwait for enough proxies... %ds' % i, end='')
         time.sleep(1)
     logging.error("Not have enough proxies!Please check proxyip module and run process again.")
     return False
@@ -68,9 +68,7 @@ def main():
     zhNewTopicID：搜索后获取到的新话题id
     zhTopicQuestions：话题精华/讨论问题和文章等相关详细内容
     """
-    while True:
-        if not process_monitored(p_list):
-            break
+    while process_monitored(p_list):
         print(
             '\rvalidProxyIP:%d    zhTemporaryWords:%d    zhTopicMessage:%d     zhNewTopicID:%d   zhTopicQuestions:%d' % (
                 redis_cli.hlen('useful_proxy'), redis_cli.scard('zhTemporaryWords'), redis_cli.hlen('zhTopicMessage'),
