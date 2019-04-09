@@ -17,8 +17,8 @@ import requests
 
 sys.path.append('..')
 
-from proxyip.Util.WebRequest import WebRequest
-from proxyip.Util.utilFunction import getHtmlTree
+from proxy.Util.WebRequest import WebRequest
+from proxy.Util.utilFunction import getHtmlTree
 
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()

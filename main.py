@@ -2,12 +2,12 @@ from zh_crawler.keywords_generator.keywords_controller import run as kw_run
 from zh_crawler.topics_generator.topics_generator import run as tg_run
 from zh_crawler.questions_generator.questions_generator import run as qg_run
 from zh_crawler.questions_generator.questions_generator import OUTPUT_PATH
-from proxyip.Schedule.ProxyValidSchedule import run as ValidRun
-from proxyip.Schedule.ProxyRefreshSchedule import run as RefreshRun
-from db.redis_client import redis_cli
-from multiprocessing import Process
 from util.config import conf
-import logging
+from proxy.Schedule.ProxyValidSchedule import run as ValidRun
+from proxy.Schedule.ProxyRefreshSchedule import run as RefreshRun
+from proxy.proxies_receiver import ProxiesReceiver
+from db.crawler.crawler_db_client import redis_cli
+from multiprocessing import Process
 import time
 import os
 
@@ -25,18 +25,6 @@ def process_monitored(p_list):
     return True
 
 
-def wait_proxy():
-    """ 等待获取足够的代理ip """
-    for i in range(300):
-        proxyies = redis_cli.hlen('useful_proxy')
-        if proxyies > 5:
-            return True
-        print('\rwait for enough proxies... %ds' % i, end='')
-        time.sleep(1)
-    logging.error("Not have enough proxies!Please check proxyip module and run process again.")
-    return False
-
-
 def main():
     """ 主进程 """
     # 代理ip获取
@@ -46,7 +34,7 @@ def main():
     for p in p_list:
         p.start()
     # 等待代理ip获取，首次运行可能需要等待一段时间
-    if not wait_proxy():
+    if not ProxiesReceiver.wait_proxies():
         kill_all(p_list)
         return
     if conf.option != 2:

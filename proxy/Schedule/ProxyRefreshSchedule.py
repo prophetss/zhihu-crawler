@@ -22,8 +22,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 sys.path.append('../')
 
-from proxyip.Util.utilFunction import validUsefulProxy
-from proxyip.Manager.ProxyManager import ProxyManager
+from proxy.Util.utilFunction import validUsefulProxy
+from proxy.Manager.ProxyManager import ProxyManager
 from util.loghandler import LogHandler
 
 __author__ = 'JHao'

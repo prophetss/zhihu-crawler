@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from configparser import ConfigParser
 from util.decorator import LazyProperty
 from util.decorator import singleton
@@ -25,6 +23,10 @@ class Config(object):
         return int(self.cfg.get('MAIN', 'top_activity'))
 
     @LazyProperty
+    def ques_path(self):
+        return str(self.cfg.get('MAIN', 'ques_path'))
+
+    @LazyProperty
     def db_redis_host(self):
         return self.cfg.get('DB_REDIS', 'host')
 
@@ -35,6 +37,14 @@ class Config(object):
     @LazyProperty
     def db_redis_name(self):
         return self.cfg.get('DB_REDIS', 'name')
+
+    @LazyProperty
+    def db_keyword_life_cycle(self):
+        return int(self.cfg.get('DB_REDIS', 'keyword_life_cycle'))
+
+    @LazyProperty
+    def db_topic_life_cycle(self):
+        return int(self.cfg.get('DB_REDIS', 'topic_life_cycle'))
 
     @LazyProperty
     def proxy_getter_functions(self):
@@ -54,3 +64,6 @@ class Config(object):
 
 
 conf = Config()
+
+if __name__ == '__main__':
+    print(conf.proxy_getter_functions)

@@ -22,8 +22,8 @@ except:
 
 sys.path.append('../')
 
-from proxyip.Schedule.ProxyCheck import ProxyCheck
-from proxyip.Manager.ProxyManager import ProxyManager
+from proxy.Schedule.ProxyCheck import ProxyCheck
+from proxy.Manager.ProxyManager import ProxyManager
 
 
 class ProxyValidSchedule(ProxyManager, object):

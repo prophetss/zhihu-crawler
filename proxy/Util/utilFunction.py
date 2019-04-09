@@ -15,7 +15,8 @@ import requests
 import time
 from lxml import etree
 
-from proxyip.Util.WebRequest import WebRequest
+from util.loghandler import LogHandler
+from proxy.Util.WebRequest import WebRequest
 
 # logger = LogHandler(__name__, stream=False)
 

@@ -15,12 +15,12 @@ __author__ = 'JHao'
 
 import random
 
-from proxyip.Util import EnvUtil
-from proxyip.DB.DbClient import DbClient
+from proxy.Util import EnvUtil
+from db.proxy.proxy_db_client import ProxyDBClient
 from util.config import conf
 from util.loghandler import LogHandler
-from proxyip.Util.utilFunction import verifyProxyFormat
-from proxyip.ProxyGetter.getFreeProxy import GetFreeProxy
+from proxy.Util.utilFunction import verifyProxyFormat
+from proxy.ProxyGetter.getFreeProxy import GetFreeProxy
 
 
 class ProxyManager(object):
@@ -29,7 +29,7 @@ class ProxyManager(object):
     """
 
     def __init__(self):
-        self.db = DbClient()
+        self.db = ProxyDBClient('proxy')
         self.raw_proxy_queue = 'raw_proxy'
         self.log = LogHandler('proxy_manager')
         self.useful_proxy_queue = 'useful_proxy'
@@ -53,7 +53,7 @@ class ProxyManager(object):
                     else:
                         self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
             except Exception as e:
-                self.log.error("{func}: fetch proxy fail".format(func=proxyGetter))
+                self.log.warn("{func}: fetch proxy fail".format(func=proxyGetter))
                 continue
 
     def get(self):

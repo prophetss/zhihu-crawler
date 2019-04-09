@@ -1,18 +1,18 @@
-from db.redis_client import redis_cli
 from util.common import headers
+from db.crawler.crawler_db_client import redis_cli
+from proxy.proxies_receiver import ProxiesReceiver
 from util.common import addtwodimdict
 from util.loghandler import LogHandler
 from util.config import conf
-from util.common import PROJECT_DIR
 from util.decorator import timethis
 from json.decoder import JSONDecodeError
 import requests
-import random
-import time
 import json
 import os
 
-OUTPUT_PATH = os.path.join(PROJECT_DIR, 'output')
+OUTPUT_PATH = conf.ques_path
+if not os.path.exists(OUTPUT_PATH):
+    os.makedirs(OUTPUT_PATH)
 
 
 class QuestionsGenerator:
@@ -21,10 +21,12 @@ class QuestionsGenerator:
     essence_url = "https://www.zhihu.com/api/v4/topics/%u/feeds/essence?limit=10&offset=%u"  # 精华问题
 
     def __init__(self):
-        self.proxies_list = []
+        self.p_receiver = ProxiesReceiver()
         self.essence_dict = dict()
         self.activity_dict = dict()
         self.session = requests.Session()
+        # 先从话题id中筛选出未获取问题的id放入待获取队列
+        QuestionsGenerator.save_new_topic_id()
         self.logger = LogHandler("question_generator")
 
     @staticmethod
@@ -80,14 +82,13 @@ class QuestionsGenerator:
         :param message_dict:存储字典
         :return:
         """
-        self.proxies_list = redis_cli.get_proxies_list()
         session = requests.session()
         sticky_num = 0
         for offset in range(0, num, 10):
             url = q_url % (tid, offset)
             try:
                 ques = session.get(url=url, headers=headers,
-                                   proxies=random.choice(self.proxies_list),
+                                   proxies=self.p_receiver.one_random,
                                    timeout=3)
             except Exception as re:
                 self.logger.warn((re, url))
@@ -138,7 +139,7 @@ class QuestionsGenerator:
             if str(q_json.get('paging', {}).get('is_end', 'none')).lower() == 'true':
                 return
 
-    def run(self):
+    def process(self):
         """
         zhTopicQuestions内包含精华(点赞比较多)和讨论(最新比较热)的问题和文章
         对应结构essence_dict和activity_dict
@@ -151,24 +152,20 @@ class QuestionsGenerator:
             json.dump({'essence': self.essence_dict, 'top_activity': self.activity_dict}, f, indent=4,
                       ensure_ascii=False)
 
-
-def save_new_topic_id():
-    """ output目录下不要手动放其他名称文件 """
-    for nid in set(redis_cli.hkeys('zhTopicMessage')) - set({x.split('.')[0] for x in os.listdir(OUTPUT_PATH)}):
-        redis_cli.sadd('zhNewTopicID', nid)
+    @staticmethod
+    def save_new_topic_id():
+        """ output目录下不要手动放其他名称文件 """
+        for nid in set(redis_cli.hkeys('zhTopicMessage')) - set(
+                {x.split('.')[0] for x in os.listdir(OUTPUT_PATH)}):
+            redis_cli.sadd('zhNewTopicID', nid)
 
 
 def run():
     """ 结果以json文件存至output目录下，文件名为话题id """
-    # 先从话题id中筛选出未获取问题的id放入待获取队列
-    save_new_topic_id()
     qg = QuestionsGenerator()
     while True:
         # 不控制速度
-        if redis_cli.proxy_ip_detect():
-            qg.run()
-        else:
-            time.sleep(3)
+        qg.process()
 
 
 if __name__ == '__main__':

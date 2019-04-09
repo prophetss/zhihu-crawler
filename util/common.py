@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import logging
 import os
 
 # 通用请求头
@@ -15,7 +12,3 @@ def addtwodimdict(thedict, key_a, key_b, val):
         thedict[key_a][key_b] = val
     else:
         thedict[key_a] = {key_b: val}
-
-
-def error_print(string):
-    print("\033[1;31;0m{}\033[0m".format(string))

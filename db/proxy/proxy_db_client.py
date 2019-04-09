@@ -2,8 +2,8 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     SsdbClient.py
-   Description :  封装SSDB操作
+   File Name：     proxy_db_client.py
+   Description :  封装SSDB/Redis操作
    Author :       JHao
    date：          2016/12/2
 -------------------------------------------------
@@ -15,19 +15,19 @@
 """
 __author__ = 'JHao'
 
-from proxyip.Util import EnvUtil
+from proxy.Util import EnvUtil
 
 from redis.connection import BlockingConnectionPool
 from redis import Redis
 import random
 
 
-class SsdbClient(object):
+class ProxyDBClient(object):
     """
     SSDB client
 
     SSDB中代理存放的容器为hash：
-        原始代理存放在name为raw_proxy的hash中，key为代理的ip:port，value为为None,以后扩展可能会加入代理属性；
+        原始代理存放在name为raw_proxy的hash中，key为代理的ip:port，value为None,以后扩展可能会加入代理属性；
         验证后的代理存放在name为useful_proxy的hash中，key为代理的ip:port，value为一个计数,初始为1，每校验失败一次减1；
 
     """
@@ -113,5 +113,5 @@ class SsdbClient(object):
 
 
 if __name__ == '__main__':
-    c = SsdbClient(name='useful_proxy', host='127.0.0.1', port=8899, password=None)
+    c = ProxyDBClient(name='useful_proxy', host='127.0.0.1', port=8899, password=None)
     print(c.getAll())

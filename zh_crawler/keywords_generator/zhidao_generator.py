@@ -1,5 +1,4 @@
 from requests.exceptions import RequestException
-from db.redis_client import redis_cli
 from util.decorator import timethis
 from bs4 import BeautifulSoup
 from util.loghandler import LogHandler
@@ -11,7 +10,6 @@ class ZhiDaoGenerator:
 
     def __init__(self):
         self.logger = LogHandler('zhidao_crawl')
-
         try:
             # 知道请求头，获取Cookie的BAIDUID，否则抓取不到数据
             self.zhidao_headers = {
@@ -33,28 +31,25 @@ class ZhiDaoGenerator:
                     kws.append(kw.string)
             return kws
         except RequestException as re:
-            self.logger.warn(re)
+            self.logger.warning(re)
             return []
         except Exception as e:
             raise e
 
     @timethis
-    def crawl_zhidao_words(self):
+    def crawl_zhidao_words(self, save_keyword):
         """ 百度知道抓取 """
         try:
             req = requests.get(url='https://zhidao.baidu.com/list?_pjax=%23j-question-list-pjax-container',
                                headers=self.zhidao_headers, timeout=3)
             req.encoding = req.apparent_encoding
-            bf = BeautifulSoup(req.text, "html.parser")
-            for qs in bf.find_all('div', class_='question-title-section'):
+            for qs in BeautifulSoup(req.text, "html.parser").find_all('div', class_='question-title-section'):
                 # 问题所属领域关键词提取
                 for qt in map(lambda x: x.string.replace('\n', ''), qs.find_all('a', class_='tag-item')):
-                    self.logger.info(str(qt))
-                    redis_cli.save_keyword(qt)
+                    save_keyword(qt)
                 # 问题内容包含关键词提取
                 for qm in self.__zd_question_keywords(qs.a.get('href')):
-                    self.logger.info(str(qm))
-                    redis_cli.save_keyword(str(qm))
+                    save_keyword(str(qm))
         except RequestException as re:
             self.logger.warn(re)
         except Exception as e:
@@ -62,4 +57,4 @@ class ZhiDaoGenerator:
 
 
 if __name__ == '__main__':
-    ZhiDaoGenerator().crawl_zhidao_words()
+    ZhiDaoGenerator().crawl_zhidao_words(print)

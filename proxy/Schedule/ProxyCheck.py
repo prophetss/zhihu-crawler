@@ -17,8 +17,8 @@ from threading import Thread
 
 sys.path.append('../')
 
-from proxyip.Util.utilFunction import validUsefulProxy
-from proxyip.Manager.ProxyManager import ProxyManager
+from proxy.Util.utilFunction import validUsefulProxy
+from proxy.Manager.ProxyManager import ProxyManager
 from util.loghandler import LogHandler
 
 FAIL_COUNT = 1  # 校验失败次数， 超过次数删除代理
